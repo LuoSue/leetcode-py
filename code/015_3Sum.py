@@ -41,17 +41,16 @@ class Solution:
             if i > 0 and nums[i - 1] == nums[i]:
                 continue
 
-            # 将三数之和问题转化为两数之和问题，目标为-nums[i]
-            target = -nums[i]
+            # 将三数之和问题转化为两数之和问题，固定 i，调整 left 与 right
             left, right = i + 1, n - 1  # 左右指针分别指向剩余部分的开始和结束
 
             while left < right:
-                current_sum = nums[left] + nums[right]
+                current_sum = nums[i] + nums[left] + nums[right]
 
-                if current_sum > target:
+                if current_sum > 0:
                     # 两数之和太大，右指针左移
                     right -= 1
-                elif current_sum < target:
+                elif current_sum < 0:
                     # 两数之和太小，左指针右移
                     left += 1
                 else:
