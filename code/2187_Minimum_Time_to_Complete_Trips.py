@@ -10,26 +10,29 @@
 
 from typing import List
 
-
 class Solution:
     def minimumTime(self, time: List[int], totalTrips: int) -> int:
-        # 判断在给定时间 t 下，是否能完成至少 totalTrips 趟旅程
-        def can_finish(t):
-            trips = 0
-            for t_i in time:
-                trips += t // t_i
-            return trips >= totalTrips
-
-        # 二分搜索范围：1 到 最快的车全程跑完所有行程所需的时间
+        # 最短可能时间为1，最长时间为最慢的司机做完所有旅程所需的时间
         left, right = 1, min(time) * totalTrips
-        result = right  # 初始化为最大值
 
-        while left <= right:
-            mid = (left + right) // 2
-            if can_finish(mid):
-                result = mid  # 找到一个可能的最小时间
-                right = mid - 1  # 尝试更小时间
+        # 使用二分查找，寻找能够完成所有旅程所需的最小时间
+        while left < right:
+            mid = (left + right) // 2  # 当前猜测的时间
+            total = 0  # 当前猜测时间内可以完成的总旅程数
+
+            # 计算在mid时间内，每个司机最多可以完成多少旅程
+            for t in time:
+                total += mid // t
+                # 如果已经超过所需旅程数，可以提前结束
+                if total >= totalTrips:
+                    break
+
+            # 如果能完成所需旅程数，则尝试缩小右边界
+            if total >= totalTrips:
+                right = mid
+            # 否则需要更长的时间，调整左边界
             else:
-                left = mid + 1  # 时间太短，旅程不够多
+                left = mid + 1
 
-        return result
+        # 最小的可行时间即为结果
+        return left

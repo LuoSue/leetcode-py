@@ -24,17 +24,15 @@ class Solution:
 
         # 二分查找的左右边界
         left, right = 1, max(piles)
-        result = right  # 初始化结果为最大值（最坏情况下每小时吃最多）
 
         # 开始二分查找
-        while left <= right:
+        while left < right:
             mid = (left + right) // 2  # 当前尝试的速度
             if can_finish(mid):
                 # 如果能吃完，说明速度可以更小，尝试左半边
-                result = mid
-                right = mid - 1
+                right = mid
             else:
                 # 吃不完，说明速度太慢，尝试右半边
                 left = mid + 1
 
-        return result  # 返回最小可行的速度
+        return right  # 返回最小可行的速度
