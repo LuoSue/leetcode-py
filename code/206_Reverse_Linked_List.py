@@ -22,18 +22,19 @@ class Solution:
         """
         递归方式反转链表
         """
-        # 如果链表为空或只有一个节点，直接返回 head
+        # 递归终止条件：当链表为空或只剩下一个节点时，直接返回该节点作为新的头节点
         if not head or not head.next:
             return head
 
-        # 递归反转子链表
-        new_head = self.reverseListRecursive(head.next)
-        # 将当前节点的 next 的 next 指向当前节点
-        head.next.next = head
-        # 当前节点断开原来的 next
-        head.next = None
+        next_node = head.next  # 保存下一个节点
+        head.next = None  # 断开当前节点与下一个节点的连接，防止形成环
 
-        return new_head
+        # 递归反转剩余链表，new_head 是反转后的新头节点
+        new_head = self.reverseList(next_node)
+
+        next_node.next = head  # 将原来 next_node 的 next 指向当前节点，完成反转
+
+        return new_head  # 返回反转后的新头节点
 
     def reverseListIterative(self, head: Optional[ListNode]) -> Optional[ListNode]:
         """
@@ -44,8 +45,8 @@ class Solution:
 
         while cur is not None:
             next_node = cur.next  # 保存下一个节点
-            cur.next = pre        # 当前节点指向前一个节点，实现局部反转
-            pre = cur             # 更新前一个节点为当前节点
-            cur = next_node       # 移动到下一个节点
+            cur.next = pre  # 当前节点指向前一个节点，实现局部反转
+            pre = cur  # 更新前一个节点为当前节点
+            cur = next_node  # 移动到下一个节点
 
         return pre  # pre 最终指向新的头节点
