@@ -20,9 +20,9 @@ class ListNode:
 class Solution:
     def isPalindrome(self, head: Optional[ListNode]) -> bool:
         if not head or not head.next:
-            return True
+            return True  # 空链表或单个节点一定是回文
 
-        # Step 1: 使用快慢指针找到中间节点
+        # Step 1: 使用快慢指针找到链表中点
         slow, fast = head, head
         while fast and fast.next:
             slow = slow.next
@@ -32,16 +32,16 @@ class Solution:
         prev = None
         while slow:
             next_node = slow.next
-            slow.next = prev
+            slow.next = prev  # 反转指针
             prev = slow
             slow = next_node
 
         # Step 3: 比较前半部分和反转后的后半部分
         left, right = head, prev
-        while left and right:
+        while right:  # 只需要比对后半部分长度
             if left.val != right.val:
-                return False
+                return False  # 有不相等的节点，不是回文
             left = left.next
             right = right.next
 
-        return True
+        return True  # 全部比对成功，是回文
