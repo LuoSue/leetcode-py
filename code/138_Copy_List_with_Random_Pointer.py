@@ -19,7 +19,12 @@ class Node:
 
 
 class Solution:
-    def copyRandomList(self, head: "Optional[Node]") -> "Optional[Node]":
+    def copy_list_with_random_pointers(
+        self, head: "Optional[Node]"
+    ) -> "Optional[Node]":
+        """
+        方法一：在原链表中插入复制节点，再分离出新链表
+        """
         # 1. 在原链表中插入复制节点
         cur = head
         while cur:
@@ -34,11 +39,11 @@ class Solution:
             if cur.random:
                 cur.next.random = (
                     cur.random.next
-                )  # 新节点的 random 指向原 random 节点的下一个（即对应的新节点）
+                )  # 新节点的 random 指向原 random 节点的下一个（即新节点）
             cur = cur.next.next  # 移动到下一个原节点
 
         # 3. 拆分链表，将复制链表从原链表中分离出来
-        dummy = Node(0)
+        dummy = Node(0)  # 哨兵节点，方便操作
         copy_cur = dummy
         cur = head
         while cur:
@@ -48,3 +53,30 @@ class Solution:
             cur = cur.next  # 移动到下一个原节点
 
         return dummy.next
+
+    def copy_list_with_hashmap(self, head: "Optional[Node]") -> "Optional[Node]":
+        """
+        方法二：使用哈希表记录原节点和复制节点的对应关系
+        """
+        if not head:
+            return None
+
+        # 创建哈希表，存储原节点到新节点的映射
+        old_to_new = {}
+
+        # 第一步：复制节点并填充哈希表
+        cur = head
+        while cur:
+            old_to_new[cur] = Node(cur.val)  # 复制节点
+            cur = cur.next
+
+        # 第二步：设置 next 和 random 指针
+        cur = head
+        while cur:
+            if cur.next:
+                old_to_new[cur].next = old_to_new[cur.next]
+            if cur.random:
+                old_to_new[cur].random = old_to_new[cur.random]
+            cur = cur.next
+
+        return old_to_new[head]
