@@ -20,7 +20,7 @@ class TreeNode:
 
 
 class Solution:
-    def rightSideView(self, root: Optional[TreeNode]) -> List[int]:
+    def rightSideViewIterative(self, root: Optional[TreeNode]) -> List[int]:
         # 如果树为空，返回空列表
         if not root:
             return []
@@ -46,3 +46,23 @@ class Solution:
                     queue.append(node.right)
 
         return result  # 返回右视图的结果
+
+    def rightSideViewRecursive(self, root: Optional[TreeNode]) -> List[int]:
+        result = []
+
+        def dfs(node, level):
+            # 如果当前节点为空，返回
+            if not node:
+                return
+
+            # 如果当前层还没有元素，说明这是该层的第一个节点，加入右视图
+            if level == len(result):
+                result.append(node.val)
+
+            # 先递归右子树，再递归左子树，确保优先访问右子树
+            dfs(node.right, level + 1)
+            dfs(node.left, level + 1)
+
+        # 从根节点开始深度优先遍历
+        dfs(root, 0)
+        return result
