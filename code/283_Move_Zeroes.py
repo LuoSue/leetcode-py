@@ -3,7 +3,7 @@
 """
 @File    :   283_Move_Zeroes.py
 @Time    :   2025/04/15 10:49:15
-@Author  :   rj 
+@Author  :   rj
 @Version :   1.0
 @Desc    :   移动零
 """
@@ -26,7 +26,7 @@ class Solution:
         for num in nums:
             if num != 0:
                 nums[slow] = num  # 将当前非零元素赋值到 slow 指针位置
-                slow += 1         # slow 前移，准备放下一个非零元素
+                slow += 1  # slow 前移，准备放下一个非零元素
 
         # 第二轮遍历：将 slow 之后的所有位置填充为 0
         for i in range(slow, len(nums)):
