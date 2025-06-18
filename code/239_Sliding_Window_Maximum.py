@@ -29,6 +29,9 @@ class Solution:
         时间复杂度：O(n) - 每个元素最多进出队列一次
         空间复杂度：O(k) - 队列最多存储k个元素
         """
+        if not nums or k == 0:
+            return []
+
         # 双端队列：存储的是索引，且对应元素单调递减
         dq = deque()
         result = []
