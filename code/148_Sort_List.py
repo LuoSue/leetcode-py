@@ -24,38 +24,45 @@ class Solution:
         if not head or not head.next:
             return head
 
-        # 找到链表中点（使用快慢指针法）
-        def getMiddle(node):
-            slow = node  # 慢指针
-            fast = node  # 快指针
-            # 当 fast 和 fast.next 都存在时继续遍历
-            while fast.next and fast.next.next:
-                slow = slow.next  # 慢指针走一步
-                fast = fast.next.next  # 快指针走两步
-            return slow  # 返回中点节点
+        # Step 1: 均分链表为两半
+        left, right = self.splitList(head)
 
-        # 合并两个有序链表（递归实现）
-        def merge(left, right):
-            if not left:
-                return right
-            if not right:
-                return left
-            # 比较左右链表当前节点值，较小的接到结果链表上
-            if left.val < right.val:
-                left.next = merge(left.next, right)
-                return left
+        # Step 2: 对两半分别排序
+        left_sorted = self.sortList(left)
+        right_sorted = self.sortList(right)
+
+        # Step 3: 排序好的两半合并为一个链表
+        return self.merge(left_sorted, right_sorted)
+
+    def splitList(self, head: ListNode) -> tuple[ListNode, ListNode]:
+        # 使用快慢指针找到中点，slow最后停在左半部分的尾部
+        slow, fast = head, head
+        prev = None
+
+        while fast and fast.next:
+            prev = slow
+            slow = slow.next
+            fast = fast.next.next
+
+        # prev 就是中点左侧最后一个节点，断开连接
+        mid = slow
+        if prev:
+            prev.next = None
+
+        return head, mid
+
+    def merge(self, l1: ListNode, l2: ListNode) -> ListNode:
+        dummy = ListNode()
+        cur = dummy
+
+        while l1 and l2:
+            if l1.val < l2.val:
+                cur.next = l1
+                l1 = l1.next
             else:
-                right.next = merge(left, right.next)
-                return right
+                cur.next = l2
+                l2 = l2.next
+            cur = cur.next
 
-        mid = getMiddle(head)  # 找到链表中点
-        nextToMid = mid.next  # 中点后的第一个节点
-        mid.next = None  # 将链表从中间断开
-
-        # 递归排序左半部分
-        left = self.sortList(head)
-        # 递归排序右半部分
-        right = self.sortList(nextToMid)
-
-        # 合并排序后的左右两部分
-        return merge(left, right)
+        cur.next = l1 or l2  # 接上剩余部分
+        return dummy.next
