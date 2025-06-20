@@ -40,7 +40,7 @@ class Solution:
 
         dummy = ListNode(0)  # 创建虚拟头节点，方便处理边界情况
         dummy.next = head
-        prev_group_end = dummy  # 上一组的尾节点，初始指向虚拟头节点
+        prev_group_end = dummy  # 指向前一个已翻转组的最后一个节点，初始指向虚拟头节点
 
         while length >= k:  # 只要剩余节点数大于等于k就继续处理
             curr = prev_group_end.next  # 当前组的起始节点
