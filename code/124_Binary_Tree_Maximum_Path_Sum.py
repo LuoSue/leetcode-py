@@ -20,29 +20,24 @@ class TreeNode:
 
 class Solution:
     def maxPathSum(self, root: Optional[TreeNode]) -> int:
-        # 全局变量，记录最大路径和
-        max_sum = float("-inf")
+        self.max_sum = float("-inf")  # 全局最大路径和
 
-        def max_gain(node):
-            nonlocal max_sum
-
+        def dfs(node: Optional[TreeNode]) -> int:
             if not node:
                 return 0
 
-            # 递归计算左右子树的最大贡献值
-            left_gain = max(max_gain(node.left), 0)
-            right_gain = max(max_gain(node.right), 0)
+            # 递归计算左右子树的最大路径和，如果小于0就舍弃
+            left_max = max(dfs(node.left), 0)
+            right_max = max(dfs(node.right), 0)
 
-            # 当前节点的最大路径和
-            current_max_path = node.val + left_gain + right_gain
+            # 当前节点作为路径顶点时的最大路径和
+            current_max = node.val + left_max + right_max
 
             # 更新全局最大路径和
-            max_sum = max(max_sum, current_max_path)
+            self.max_sum = max(self.max_sum, current_max)
 
-            # 返回当前节点能够向上提供的最大路径和
-            return node.val + max(left_gain, right_gain)
+            # 返回当前节点对父节点的最大贡献
+            return node.val + max(left_max, right_max)
 
-        # 从根节点开始递归
-        max_gain(root)
-
-        return max_sum
+        dfs(root)
+        return self.max_sum
