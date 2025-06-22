@@ -23,8 +23,8 @@ class Solution:
 
     def flattenByPostOrder(self, root: Optional[TreeNode]) -> None:
         """
-        后序遍历法：不返回任何值，直接就地修改root。
-        通过后序遍历将右子树、左子树依次连接成链表。
+        逆先序遍历法：不返回任何值，直接就地修改root。
+        通过逆先序遍历将右子树、左子树依次连接成链表。
         """
         if root is None:
             return
