@@ -23,11 +23,11 @@ class Solution:
                 result.append(path[:])  # 复制当前路径，添加到结果中
                 return
 
-            for end in range(start + 1, len(s) + 1):
-                substr = s[start:end]  # 获取当前的子串
+            for end in range(start, len(s)):
+                substr = s[start : end + 1]  # 获取当前的子串
                 if is_palindrome(substr):
                     path.append(substr)  # 如果是回文串，将其加入当前路径
-                    backtrack(end, path)  # 递归处理剩余的字符串
+                    backtrack(end + 1, path)  # 递归处理剩余的字符串
                     path.pop()  # 回溯，撤销上一步的选择
 
         backtrack(0, [])

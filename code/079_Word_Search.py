@@ -14,44 +14,50 @@ from collections import Counter
 
 class Solution:
     def exist(self, board: List[List[str]], word: str) -> bool:
-        if not board or not board[0]:
-            return False
+        rows, cols = len(board), len(board[0])
 
-        m, n = len(board), len(board[0])
-
-        # 提前剪枝：如果 word 中的某个字符比 board 中的数量还多，直接返回 False
-        board_counter = Counter(char for row in board for char in row)
-        word_counter = Counter(word)
-        for c in word_counter:
-            if word_counter[c] > board_counter.get(c, 0):
+        # 1. 剪枝：统计 board 上每个字符的出现频率
+        board_count = Counter(c for row in board for c in row)
+        word_count = Counter(word)
+        for c in word_count:
+            # 如果某个字符在 word 中出现次数 > board 中的次数，提前返回 False
+            if word_count[c] > board_count.get(c, 0):
                 return False
 
-        # 方向数组：上、下、左、右
-        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        # 2. 搜索优化：从 word 中较不常见的字符开始搜索，提升剪枝效率
+        if board_count[word[0]] > board_count[word[-1]]:
+            word = word[::-1]  # 反转单词，提高搜索效率
 
-        def dfs(x: int, y: int, index: int) -> bool:
-            # 所有字符都匹配，返回 True
-            if index == len(word):
+        # 3. 定义 DFS 搜索函数
+        def dfs(i, j, k):
+            # 当前格子字符与 word[k] 不匹配，剪枝
+            if board[i][j] != word[k]:
+                return False
+            # 所有字符已匹配，成功
+            if k == len(word) - 1:
                 return True
-            # 越界或不匹配，返回 False
-            if x < 0 or x >= m or y < 0 or y >= n or board[x][y] != word[index]:
-                return False
 
-            temp = board[x][y]
-            board[x][y] = "#"  # 标记已访问
+            # 暂存当前字符并标记为已访问
+            tmp = board[i][j]
+            board[i][j] = "#"  # 使用特殊标记防止重复访问
 
-            for dx, dy in directions:
-                if dfs(x + dx, y + dy, index + 1):
-                    board[x][y] = temp  # 提前恢复，减少回溯路径
-                    return True
+            # 四个方向搜索：上、下、左、右
+            for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                ni, nj = i + dx, j + dy
+                # 如果新位置合法且未被访问
+                if 0 <= ni < rows and 0 <= nj < cols and board[ni][nj] != "#":
+                    if dfs(ni, nj, k + 1):
+                        return True  # 匹配成功
 
-            board[x][y] = temp  # 恢复现场
-            return False
+            # 回溯：还原当前格子的值
+            board[i][j] = tmp
+            return False  # 当前路径匹配失败
 
-        # 遍历所有起点
-        for i in range(m):
-            for j in range(n):
-                if board[i][j] == word[0] and dfs(i, j, 0):
-                    return True
+        # 4. 遍历整个网格寻找起点
+        for i in range(rows):
+            for j in range(cols):
+                if board[i][j] == word[0]:  # 起始字符匹配
+                    if dfs(i, j, 0):  # 开始 DFS 搜索
+                        return True
 
-        return False
+        return False  # 所有路径都没匹配成功
