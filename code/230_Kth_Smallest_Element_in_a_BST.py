@@ -23,24 +23,25 @@ class Solution:
         # 初始化计数器和结果变量
         self.count = 0
         self.result = None
+        def inorder(node):
+            # 中序遍历树并查找第 K 小的元素
+            if not node or self.result is not None:
+                return
+            # 遍历左子树
+            inorder(node.left)
+            # 访问当前节点
+            self.count += 1
+            # 如果当前节点是第 K 小元素，保存结果
+            if self.count == k:
+                self.result = node.val
+                return
+            # 遍历右子树
+            inorder(node.right)
         # 调用中序遍历函数
-        self.inorder(root, k)
+        inorder(root)
         return self.result
 
-    def inorder(self, node, k):
-        # 中序遍历树并查找第 K 小的元素
-        if not node or self.result is not None:
-            return
-        # 遍历左子树
-        self.inorder(node.left, k)
-        # 访问当前节点
-        self.count += 1
-        # 如果当前节点是第 K 小元素，保存结果
-        if self.count == k:
-            self.result = node.val
-            return
-        # 遍历右子树
-        self.inorder(node.right, k)
+
 
     def kthSmallest_iterative(self, root: Optional[TreeNode], k: int) -> int:
         # 非递归实现：使用栈模拟中序遍历
