@@ -31,7 +31,7 @@ class Solution:
                 else:
                     # 否则在右半部分，移动左边界
                     left = mid + 1
-            else:
+            if nums[mid] <= nums[right]:
                 # 否则右半部分是有序的
                 # 如果目标值在右半部分的有序区间内，缩小左边界
                 if nums[mid] < target <= nums[right]:

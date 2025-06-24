@@ -47,6 +47,8 @@ class Solution:
                 # 如果新位置合法且未被访问
                 if 0 <= ni < rows and 0 <= nj < cols and board[ni][nj] != "#":
                     if dfs(ni, nj, k + 1):
+                        # 提前回溯
+                        board[i][j] = tmp
                         return True  # 匹配成功
 
             # 回溯：还原当前格子的值
