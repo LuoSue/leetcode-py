@@ -11,27 +11,28 @@
 
 class Solution:
     def decodeString(self, s: str) -> str:
-        stack = []
-        current_num = 0
-        current_str = ""
+        num_stack = []  # 存储倍数
+        str_stack = []  # 存储当前字符串
+        current_str = ""  # 当前构造的字符串
+        num = 0  # 当前数字
 
-        for char in s:
-            if char.isdigit():
-                current_num = current_num * 10 + int(char)  # 处理多位数字
-            elif char == "[":
-                # 将当前字符串和数字入栈
-                stack.append(current_str)
-                stack.append(current_num)
-                # 重置当前字符串和数字
+        for ch in s:
+            if ch.isdigit():
+                # 构建多位数字
+                num = num * 10 + int(ch)
+            elif ch == "[":
+                # 进入新一层，保存当前状态
+                num_stack.append(num)
+                str_stack.append(current_str)
+                num = 0
                 current_str = ""
-                current_num = 0
-            elif char == "]":
-                # 弹出数字和字符串，进行解码
-                num = stack.pop()
-                prev_str = stack.pop()
-                current_str = prev_str + current_str * num  # 重复并拼接
+            elif ch == "]":
+                # 弹出栈顶，构造新的字符串
+                repeat_times = num_stack.pop()
+                last_str = str_stack.pop()
+                current_str = last_str + current_str * repeat_times
             else:
-                # 普通字符，直接添加到当前字符串
-                current_str += char
+                # 普通字母
+                current_str += ch
 
         return current_str

@@ -19,14 +19,12 @@ class Solution:
 
         # 遍历数组中的每个元素
         for num in nums:
-            # 如果堆的大小还没到 k，直接将当前元素加入堆中
-            if len(min_heap) < k:
-                heapq.heappush(min_heap, num)
-            else:
-                # 如果当前元素比堆顶元素大，说明它可能是前 k 大的元素之一
-                # 把堆顶元素弹出，加入当前元素，保持堆的大小为 k
-                if num > min_heap[0]:
-                    heapq.heappushpop(min_heap, num)
+            # 将当前元素加入堆中
+            heapq.heappush(min_heap, num)
+            # 如果堆的大小在加入后大于k，则弹出堆顶元素
+            if len(min_heap) > k:
+                # 把堆顶元素弹出，保持堆的大小为k
+                heapq.heappop(min_heap)
 
         # 遍历完成后，堆顶元素就是第 k 大的元素
         return min_heap[0]
