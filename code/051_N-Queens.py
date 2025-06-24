@@ -13,38 +13,46 @@ from typing import List
 
 class Solution:
     def solveNQueens(self, n: int) -> List[List[str]]:
-        def backtrack(row: int, cols: set, diag1: set, diag2: set, path: List[str]):
-            # 如果已经成功放置了 n 个皇后（即 n 行），将当前路径加入结果中
+        def backtrack(
+            row: int,
+            cols: List[bool],
+            diag1: List[bool],
+            diag2: List[bool],
+            path: List[str],
+        ):
+            # 如果已经成功放置了 n 个皇后，说明找到一个合法方案
             if row == n:
-                result.append(path[:])  # 注意要复制 path（不可直接引用）
+                result.append(path[:])  # 保存当前路径的副本
                 return
 
             # 尝试在当前行的每一列放置皇后
             for col in range(n):
-                # 判断当前位置是否与之前放置的皇后冲突：
-                # 列相同：col ∈ cols
-                # 主对角线相同：row - col ∈ diag1
-                # 副对角线相同：row + col ∈ diag2
-                if col in cols or (row - col) in diag1 or (row + col) in diag2:
-                    continue  # 有冲突，跳过
+                # 计算当前单元格对应的主对角线和副对角线下标
+                d1 = row - col + n - 1  # 主对角线 row - col 映射到 0 ~ 2n-2
+                d2 = row + col  # 副对角线 row + col 自然落在 0 ~ 2n-2
 
-                # 构造当前行的字符串，例如在第 2 列放皇后：'..Q.'
+                # 如果当前位置被攻击（即列或对角线已被占用），则跳过
+                if cols[col] or diag1[d1] or diag2[d2]:
+                    continue
+
+                # 放置皇后，标记当前列和对角线为 True（已占用）
+                cols[col] = diag1[d1] = diag2[d2] = True
+
+                # 构造当前行的字符串，如在第 2 列放皇后：'..Q.'
                 row_str = "." * col + "Q" + "." * (n - col - 1)
 
-                # 做出选择：标记列和对角线，并将当前行加入路径
-                cols.add(col)
-                diag1.add(row - col)
-                diag2.add(row + col)
-
-                # 递归进入下一行，path + [row_str] 生成一个新的列表（函数式风格）
+                # 递归尝试放置下一行皇后，path + [row_str] 生成新的路径列表
                 backtrack(row + 1, cols, diag1, diag2, path + [row_str])
 
-                # 回溯：撤销选择，移除标记（注意 path 不需要撤销，因为是新列表）
-                cols.remove(col)
-                diag1.remove(row - col)
-                diag2.remove(row + col)
+                # 回溯：撤销选择，恢复列和对角线标记
+                cols[col] = diag1[d1] = diag2[d2] = False
 
-        result = []  # 用于保存所有合法的解决方案
-        # 初始化回溯：从第 0 行开始，path 初始为空
-        backtrack(0, set(), set(), set(), [])
+        result = []  # 用于保存所有合法解
+        # 初始化布尔数组：列、主对角线、副对角线是否被占用
+        cols = [False] * n
+        diag1 = [False] * (2 * n - 1)
+        diag2 = [False] * (2 * n - 1)
+
+        # 开始回溯，从第 0 行开始，路径初始为空
+        backtrack(0, cols, diag1, diag2, [])
         return result
