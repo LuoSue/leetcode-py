@@ -23,6 +23,9 @@ class Solution:
             # 如果当前索引超过了最大可达位置，说明无法跳到当前索引
             if i > max_reach:
                 return False
+            # 如果最大可达位置已经大于等于最后一个下标，提前结束循环
+            if max_reach >= n - 1:
+                return True
             # 更新最大可达位置：当前位置 + 当前位置的跳跃距离
             max_reach = max(i + nums[i], max_reach)
 
