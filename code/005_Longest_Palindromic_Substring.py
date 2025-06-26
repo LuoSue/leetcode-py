@@ -42,3 +42,26 @@ class Solution:
                         max_len = length
 
         return s[start : start + max_len]
+
+    def longestPalindromeCenter(self, s: str) -> str:
+        if len(s) < 2:
+            return s
+
+        start, end = 0, 0
+
+        def expandAroundCenter(left: int, right: int):
+            nonlocal start, end
+            while left >= 0 and right < len(s) and s[left] == s[right]:
+                left -= 1
+                right += 1
+            if right - left - 1 > end - start:
+                start = left + 1
+                end = right
+
+        for i in range(len(s)):
+            # 以单个字符为中心（奇数长度）
+            expandAroundCenter(i, i)
+            # 以两个字符为中心（偶数长度）
+            expandAroundCenter(i, i + 1)
+
+        return s[start:end]
