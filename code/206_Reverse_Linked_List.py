@@ -26,13 +26,11 @@ class Solution:
         if not head or not head.next:
             return head
 
-        next_node = head.next  # 保存下一个节点
-        head.next = None  # 断开当前节点与下一个节点的连接，防止形成环
-
         # 递归反转剩余链表，new_head 是反转后的新头节点
-        new_head = self.reverseList(next_node)
+        new_head = self.reverseListRecursive(head.next)
 
-        next_node.next = head  # 将原来 next_node 的 next 指向当前节点，完成反转
+        head.next.next = head  # 将当前节点的 next 指向当前节点，完成反转
+        head.next = None
 
         return new_head  # 返回反转后的新头节点
 

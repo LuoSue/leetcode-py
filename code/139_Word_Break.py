@@ -3,7 +3,7 @@
 """
 @File    :   139_Word_Break.py
 @Time    :   2025/04/27 22:36:27
-@Author  :   rj 
+@Author  :   rj
 @Version :   1.0
 @Desc    :   单词拆分
 """
@@ -13,6 +13,23 @@ from typing import List
 
 class Solution:
     def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        """
+        动态规划思路：
+        定义 dp[i] 表示字符串 s 的前 i 个字符 s[:i] 是否可以被字典中的单词拆分组成。
+        初始状态：dp[0] = True，空字符串可被拆分。
+
+        状态转移：
+        对每个位置 i（从1到n），
+            尝试从 i 的前面某个位置 j 拆分，
+            如果 dp[j] 是 True，且 s[j:i] 是字典中的单词，
+            那么 dp[i] 也为 True。
+
+        通过这个过程，dp[n] 即表示整个字符串 s 是否可被拆分。
+
+        优化：
+        由于单词有最大长度 max_len，可以缩小 j 的遍历区间，减少不必要的检查。
+        """
+
         # 将单词列表转换为集合，加快查找速度
         word_set = set(wordDict)
         # 获取字典中最长单词的长度，减少不必要的遍历
