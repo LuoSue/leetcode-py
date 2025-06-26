@@ -12,6 +12,31 @@ from typing import List
 
 class Solution:
     def canPartition(self, nums: List[int]) -> bool:
+        """
+        动态规划思路：
+        这是一个典型的 0-1 背包问题：
+        - 给你一个正整数数组，判断能否从中选出一些数，使它们的和等于总和的一半。
+        - 抽象成：从数组中选若干数（每个数最多选一次），是否可以组成 sum(nums) // 2。
+
+        定义状态：
+        - dp[i] 表示是否存在子集，其元素和为 i。
+
+        初始状态：
+        - dp[0] = True，因为空集的和为 0。
+
+        状态转移方程：
+        - 对于每个数 num，从后往前遍历 j：
+            dp[j] = dp[j] or dp[j - num]
+        - 意思是：若之前已有某个子集和为 j - num，加上 num 就能组成 j。
+
+        注意事项：
+        - 倒序遍历是为了防止 num 被多次使用（保证 0-1 背包的性质）。
+
+        时间复杂度：O(n * target)
+        空间复杂度：O(target)
+        """
+        
+        
         # 计算所有元素的总和
         total_sum = sum(nums)
         
