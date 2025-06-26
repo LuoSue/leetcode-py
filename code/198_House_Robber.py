@@ -18,12 +18,12 @@ class Solution:
 
         n = len(nums)
         # prev2 表示抢劫当前房子之前，最大能抢到的钱（相当于前两间房子）
-        prev2 = nums[0]
+        prev2 = 0
         # prev1 表示抢劫当前房子的前一间房子，或者前两间房子的最大值
-        prev1 = max(nums[0], nums[1])
+        prev1 = 0
 
-        # 从第三个房子开始，依次判断每个房子是否抢劫
-        for i in range(2, n):
+        # 从第一个房子开始，依次判断每个房子是否抢劫
+        for i in range(n):
             # 对于每个房子，选择是抢劫它（prev2 + nums[i]）还是跳过它（prev1）
             current = max(prev1, prev2 + nums[i])
             # 更新 prev2 和 prev1 为下次循环做准备
