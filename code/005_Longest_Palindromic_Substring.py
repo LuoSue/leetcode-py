@@ -65,3 +65,40 @@ class Solution:
             expandAroundCenter(i, i + 1)
 
         return s[start:end]
+
+    def longestPalindromeManacher(self, s: str) -> str:
+        """
+        使用 Manacher 算法求解最长回文子串。
+        时间复杂度：O(n)
+        空间复杂度：O(n)
+        """
+        if not s:
+            return ""
+
+        # 1. 预处理：加入分隔符 '#'，并添加哨兵字符 '^' 和 '$' 防止越界
+        t = "^#" + "#".join(s) + "#$"
+        n = len(t)
+        P = [0] * n  # P[i] 表示以 i 为中心的最大回文半径
+        center = right = 0  # 当前回文的中心和右边界
+
+        for i in range(1, n - 1):
+            mirror = 2 * center - i  # i 关于 center 的对称位置
+
+            if i < right:
+                P[i] = min(right - i, P[mirror])  # 尝试缩小搜索范围
+
+            # 尝试扩展回文
+            while t[i + P[i] + 1] == t[i - P[i] - 1]:
+                P[i] += 1
+
+            # 更新回文右边界和中心
+            if i + P[i] > right:
+                center = i
+                right = i + P[i]
+
+        # 找出最大回文子串的中心及长度
+        max_len = max(P)
+        center_index = P.index(max_len)
+        start = (center_index - max_len) // 2  # 还原在原始字符串中的起点
+
+        return s[start : start + max_len]

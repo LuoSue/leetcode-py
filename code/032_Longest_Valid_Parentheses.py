@@ -60,3 +60,36 @@ class Solution:
                 max_len = max(max_len, dp[i])
 
         return max_len
+
+    def longestValidParentheses_stack(self, s: str) -> int:
+        """
+        栈解法思路：
+        使用一个栈保存括号的索引位置，用来匹配有效括号。
+
+        初始在栈中压入 -1，作为基准点（哨兵）：
+        - 如果当前字符是 '('，将其索引压入栈；
+        - 如果是 ')'，弹出栈顶元素：
+            - 如果栈变空，说明当前右括号无法匹配，入栈当前索引作为新起点；
+            - 如果栈非空，当前 i - stack[-1] 即为一个有效括号子串的长度。
+
+        遍历过程中不断更新最大长度。
+
+        时间复杂度：O(n)
+        空间复杂度：O(n)
+        """
+        max_len = 0
+        stack = [-1]  # 哨兵，代表一个虚拟起点
+
+        for i, c in enumerate(s):
+            if c == "(":
+                stack.append(i)
+            else:
+                stack.pop()
+                if not stack:
+                    # 当前右括号无法配对，更新起点
+                    stack.append(i)
+                else:
+                    # 当前右括号匹配成功，更新最大长度
+                    max_len = max(max_len, i - stack[-1])
+
+        return max_len
