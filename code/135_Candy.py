@@ -27,3 +27,36 @@ class Solution:
                 candies[i] = candies[i + 1] + 1
 
         return sum(candies)  # 返回糖果总数
+
+    def candy_optimized(self, ratings: List[int]) -> int:
+        """
+        空间优化版本：不使用额外数组，只维护总糖果数和上升/下降坡长度。
+        """
+        n = len(ratings)
+        if n <= 1:
+            return n
+
+        total = 1  # 第一个孩子先分1个
+        up = 0  # 当前上升坡长度
+        down = 0  # 当前下降坡长度
+        peak = 0  # 上一次上升的峰值长度
+
+        for i in range(1, n):
+            if ratings[i] > ratings[i - 1]:
+                # 上坡，更新上升长度，重置下坡
+                up += 1
+                peak = up
+                down = 0
+                total += 1 + up
+            elif ratings[i] == ratings[i - 1]:
+                # 平坡，重置所有坡
+                up = down = peak = 0
+                total += 1
+            else:
+                # 下坡
+                up = 0
+                down += 1
+                total += 1 + down - (1 if down <= peak else 0)
+                # 如果下降长度超过了上升峰值，说明峰值那个人分少了，需要补一个
+
+        return total
