@@ -3,47 +3,35 @@
 """
 @File    :   213_House_Robber_II.py
 @Time    :   2025/04/27 11:05:46
-@Author  :   rj 
+@Author  :   rj
 @Version :   1.0
 @Desc    :   打家劫舍 II - 解法
+             房屋排成一个环形，不能同时抢第一间和最后一间
 """
 
 from typing import List
 
 class Solution:
+    def simple_rob(self, nums: List[int]) -> int:
+        # f0 表示不抢当前房屋时的最大金额
+        # f1 表示抢当前房屋时的最大金额
+        f0 = f1 = 0
+
+        for num in nums:
+            # 状态转移：
+            # f0变为上一个f1（即不抢当前房屋）
+            # f1更新为当前的最大值（抢当前房屋或者不抢）
+            f0, f1 = f1, max(f1, f0 + num)
+
+        return f1  # 返回最大收益
+
     def rob(self, nums: List[int]) -> int:
-        # 辅助函数，解决普通的打家劫舍问题（房子排列成一条线）
-        def simple_rob(nums):
-            n = len(nums)
-
-            # 如果只有一座房子，直接返回它的金额
-            if n == 1:
-                return nums[0]
-
-            # 初始化前两个房子的金额：prev2 (房子 0)，prev1 (房子 0 和房子 1 中的较大值)
-            prev2 = nums[0]
-            prev1 = max(nums[0], nums[1])
-
-            # 从第三座房子开始，遍历每一座房子
-            for i in range(2, n):
-                # 对每一座房子，决定是抢还是不抢
-                current = max(prev1, prev2 + nums[i])
-                prev2 = prev1  # 将前两座房子的结果往前移
-                prev1 = current
-
-            # 返回能抢到的最大金额
-            return prev1
-
-        # 如果只有一座房子，直接返回它的金额
-        n = len(nums)
-        if n == 1:
+        # 特殊情况：只有一家，直接抢
+        if len(nums) == 1:
             return nums[0]
 
-        # 情况 1：抢除了最后一座房子以外的所有房子
-        case1 = simple_rob(nums[:-1])
-        
-        # 情况 2：抢除了第一座房子以外的所有房子
-        case2 = simple_rob(nums[1:])
-
-        # 返回两种情况中的最大值
-        return max(case1, case2)
+        # 环形处理：不能同时抢第一家和最后一家
+        # 所以分两种情况取最大值：
+        # 1. 抢第1到倒数第2家（不抢最后一家）
+        # 2. 抢第2到最后一家（不抢第一家）
+        return max(self.simple_rob(nums[1:]), self.simple_rob(nums[:-1]))
