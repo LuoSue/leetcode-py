@@ -28,42 +28,59 @@ class Solution:
         :return: 翻转后的链表头节点
         """
 
-        # 计算链表长度
-        def getLength(node):
-            length = 0
-            while node:
-                length += 1
-                node = node.next
-            return length
+        # 计算链表总长度 n
+        n = 0
+        cur = head
+        while cur:
+            n += 1
+            cur = cur.next
 
-        length = getLength(head)  # 获取链表总长度
+        # p0 是前一个已反转/处理完的子链表的尾部（或初始的虚拟头节点）
+        # dummy 是虚拟头节点，便于处理头节点的改变
+        p0 = dummy = ListNode(0, head)
+        # pre 用于子链表反转时，作为前一个节点
+        pre = None
+        # cur 用于子链表反转时，作为当前节点
+        cur = head
 
-        dummy = ListNode(0)  # 创建虚拟头节点，方便处理边界情况
-        dummy.next = head
-        prev_group_end = dummy  # 指向前一个已翻转组的最后一个节点，初始指向虚拟头节点
+        # 只要剩余节点数 n 大于等于 k，就进行 k 个一组的反转
+        while n >= k:
+            n -= k  # 剩余节点数减少 k
 
-        while length >= k:  # 只要剩余节点数大于等于k就继续处理
-            curr = prev_group_end.next  # 当前组的起始节点
-            next_group_start = curr  # 保存下一组的起始节点（翻转后变为当前组的尾节点）
+            # 1. 反转当前 k 个节点
+            # pre_next 用于记录当前子链表反转后的尾部（即反转前的头部），
+            # 这样我们在反转结束后，可以用它来连接下一段未反转的链表
+            # 在进入 for 循环前，我们知道 nxt 实际上是当前反转段的第一个节点 (p0.next)，
+            # 它的 next 指针在反转后会指向下一段未反转的链表头 cur
 
-            # 翻转当前 k 个节点
-            prev = None
             for _ in range(k):
-                next_node = curr.next  # 保存下一个节点
-                curr.next = prev  # 反转当前节点的指针
-                prev = curr  # 移动prev指针
-                curr = next_node  # 移动curr指针
+                nxt = cur.next  # 记录下一个节点
+                cur.next = pre  # 反转指向：当前节点指向前一个节点
+                pre = cur  # pre 向前移动到当前节点
+                cur = nxt  # cur 向前移动到下一个节点
 
-            # 连接翻转后的部分
-            prev_group_end.next = prev  # 上一组的尾节点指向当前组翻转后的头节点
-            next_group_start.next = curr  # 当前组翻转后的尾节点指向下一组的头节点
+            # 此时：
+            # - pre 是反转后子链表的头部（即反转前的第 k 个节点）
+            # - cur 是下一段未反转链表的头部（即反转前的第 k+1 个节点）
+            # - p0.next 是反转前子链表的头部（即反转后的尾部）
 
-            # 更新 prev_group_end 为当前组的末尾（即翻转前的起始节点）
-            prev_group_end = next_group_start
+            # 2. 连接链表
+            # nxt 记录当前反转段的尾部（即反转前的头部 p0.next）
+            nxt = p0.next
 
-            length -= k  # 剩余长度减去 k
+            # 将当前反转段的尾部（反转前的头部）连接到下一段未反转链表的头部 (cur)
+            nxt.next = cur
 
-        return dummy.next  # 返回虚拟头节点的下一个节点（实际头节点）
+            # 将前一个已处理完的子链表的尾部 (p0) 连接到当前反转段的头部 (pre)
+            p0.next = pre
+
+            # 移动 p0 到当前反转段的尾部（即 nxt），准备下一轮反转
+            p0 = nxt
+            # 重置 pre，为下一轮 k 个节点反转做准备
+            pre = None
+
+        # 循环结束后，返回虚拟头节点的下一个节点，即新链表的头节点
+        return dummy.next
 
     def reverseKGroupRecursive(
         self, head: Optional[ListNode], k: int
