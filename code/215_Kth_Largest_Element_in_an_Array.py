@@ -34,41 +34,50 @@ class Solution:
         return min_heap[0]
 
     def findKthLargest_quickselect(self, nums: List[int], k: int) -> int:
-        # 第k大的元素在排序后数组中的索引是 len(nums) - k
-        # 例如：[3,2,1,5,6,4], k=2, 排序后[1,2,3,4,5,6], 第2大的元素5的索引是4 = 6-2
+        # 目标索引：第k大的元素在排序后数组中的位置是 len(nums) - k
         target = len(nums) - k
 
         def quick_select(left, right):
-            # 随机选择基准元素，避免最坏情况
-            pivot_index = random.randint(left, right)
-            # 将基准元素交换到最右边
-            nums[pivot_index], nums[right] = nums[right], nums[pivot_index]
+            # 如果区间只有一个元素，直接返回该元素
+            if left >= right:
+                return nums[left]
 
-            # 基准值
-            pivot = nums[right]
-            # i指向小于等于基准值的区域的右边界
+            # 随机选择一个基准元素，避免最坏情况
+            pivot_idx = random.randint(left, right)
+            pivot = nums[pivot_idx]
+
+            # 三路划分：
+            # lt 指向小于基准的区域的末尾
+            # i 是当前遍历指针
+            # gt 指向大于基准的区域的起始位置
+            lt = left
             i = left
+            gt = right
 
-            # 遍历[left, right-1]区间
-            for j in range(left, right):
-                # 如果当前元素小于等于基准值
-                if nums[j] <= pivot:
-                    # 将其交换到左侧区域
-                    nums[i], nums[j] = nums[j], nums[i]
+            while i <= gt:
+                if nums[i] < pivot:
+                    # 将小于基准的元素交换到左边
+                    nums[lt], nums[i] = nums[i], nums[lt]
+                    lt += 1
+                    i += 1
+                elif nums[i] > pivot:
+                    # 将大于基准的元素交换到右边
+                    nums[gt], nums[i] = nums[i], nums[gt]
+                    gt -= 1
+                else:
+                    # 等于基准的元素，继续遍历
                     i += 1
 
-            # 将基准值放到正确位置（所有小于等于它的元素在左边）
-            nums[i], nums[right] = nums[right], nums[i]
-
-            # 如果基准值的位置正好是目标位置，直接返回
-            if i == target:
-                return nums[i]
-            # 如果基准值位置小于目标位置，说明第k大的元素在右半部分
-            elif i < target:
-                return quick_select(i + 1, right)
-            # 如果基准值位置大于目标位置，说明第k大的元素在左半部分
+            # 现在数组被划分为三部分：[left, lt-1] < pivot, [lt, gt] = pivot, [gt+1, right] > pivot
+            # 如果目标索引在等于基准的区域内，直接返回基准值
+            if target >= lt and target <= gt:
+                return nums[lt]
+            # 如果目标索引在左边，递归处理左区间
+            elif target < lt:
+                return quick_select(left, lt - 1)
+            # 如果目标索引在右边，递归处理右区间
             else:
-                return quick_select(left, i - 1)
+                return quick_select(gt + 1, right)
 
         # 开始快速选择
         return quick_select(0, len(nums) - 1)
