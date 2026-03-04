@@ -13,22 +13,43 @@ from typing import List
 
 class Solution:
     def partition(self, s: str) -> List[List[str]]:
-        result = []
+        """
+        将字符串分割成若干子串，使得每个子串都是回文串。
+        返回所有可能的分割方案。
+        
+        :param s: 输入字符串
+        :return: 所有可能的分割方案，每个方案是一个字符串列表
+        """
+        result = []  # 存储所有可能的分割方案
+        path = []    # 存储当前正在构建的分割方案
+        n = len(s)   # 字符串长度
 
-        def is_palindrome(sub_str: str):
-            return sub_str == sub_str[::-1]
-
-        def backtrack(start: int, path: list):
-            if start == len(s):  # 如果到达字符串的末尾，说明找到了一种分割方案
-                result.append(path[:])  # 复制当前路径，添加到结果中
+        def dfs(i: int):
+            """
+            深度优先搜索回溯函数
+            
+            :param i: 当前待分割的起始位置
+            """
+            # 如果已经处理到字符串末尾，说明找到了一个完整的分割方案
+            if i == n:
+                result.append(path[:])  # 将当前方案加入结果集
                 return
 
-            for end in range(start, len(s)):
-                substr = s[start : end + 1]  # 获取当前的子串
-                if is_palindrome(substr):
-                    path.append(substr)  # 如果是回文串，将其加入当前路径
-                    backtrack(end + 1, path)  # 递归处理剩余的字符串
-                    path.pop()  # 回溯，撤销上一步的选择
+            # 从起始位置i开始，尝试所有可能的结束位置j
+            for j in range(i, n):
+                # 获取从i到j的子串（包含两端）
+                t = s[i : j + 1]
+                
+                # 检查子串是否为回文串（正反读相同）
+                if t == t[::-1]:
+                    # 如果是回文串，将其加入当前分割方案
+                    path.append(t)
+                    # 递归处理剩余部分，下一个起始位置为j+1
+                    dfs(j + 1)
+                    # 回溯：移除当前子串，尝试下一个可能的分割点
+                    path.pop()
 
-        backtrack(0, [])
+        # 从字符串起始位置0开始回溯
+        dfs(0)
+        
         return result
