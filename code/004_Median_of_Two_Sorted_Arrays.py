@@ -18,7 +18,20 @@ class Solution:
             nums1, nums2 = nums2, nums1
 
         m, n = len(nums1), len(nums2)
-        # 在 nums1 上进行二分查找
+        # 核心思想：分割点
+        # 对 nums1 和 nums2 各"切一刀"，将两个数组分成左右两半：
+        #   nums1: left_1 | right_1   （分割点 i，左边有 i 个元素，取值范围 [0, m]）
+        #   nums2: left_2 | right_2   （分割点 j，左边有 j 个元素，取值范围 [0, n]）
+        #
+        # 分割点 i=0 表示 nums1 全部在右半，i=m 表示 nums1 全部在左半
+        # 因此二分的搜索空间是 m+1 个切割位置，right 初始化为 m 而非 m-1
+        #
+        # 目标：找到一组 (i, j) 使得：
+        #   1. 左边总元素数 == 右边总元素数（奇数时左边多一个）
+        #      即：i + j == (m + n + 1) // 2
+        #   2. 左边最大值 <= 右边最小值
+        #      即：max(left_1, left_2) <= min(right_1, right_2)
+        # 满足以上两点，中位数就在左右边界处
         left, right = 0, m
 
         while left <= right:
